@@ -16,6 +16,8 @@ public class JsonStorage {
 
     static Map <String, Object> SerializedMap;
 
+    private static int testcommit;
+
     static {
         try {
             loadClasses();
@@ -26,7 +28,6 @@ public class JsonStorage {
 
     private static void loadClasses() throws IOException {
         Collection <Class<?>> classes = scanDirectory();
-        int i = 3;
         SerializedMap = classes.stream()
                 .filter(clazz -> {
                     Class<?>[] interfaces = clazz.getInterfaces();
