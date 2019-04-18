@@ -14,9 +14,7 @@ import java.util.stream.Collectors;
 
 public class JsonStorage {
 
-    static Map <String, Object> SerializedMap;
-
-    static Map <String, Object> DeserializedMap;
+    static Map <String, Object> SerializedMap, DeserializedMap;
 
     static {
         try {
@@ -38,7 +36,7 @@ public class JsonStorage {
                     return Arrays.stream(interfaces)
                             .anyMatch(c->c== JsonSerializer.class);
                 })
-                .collect(Collectors.toMap (clazz -> clazz.getName(), clazz-> newInstance(clazz)));
+                .collect(Collectors.toMap (clazz -> clazz.getName(), clazz-> newInstanceS(clazz)));
 
         DeserializedMap = classes.stream()
                 .filter(clazz -> {
@@ -46,13 +44,10 @@ public class JsonStorage {
                     return Arrays.stream(interfaces)
                             .anyMatch( c -> c == JsonDeserializer.class);
                 })
-                .collect(Collectors.toMap(clazz -> clazz.getName(), clazz -> newInstance(clazz)));
-
+                .collect(Collectors.toMap(clazz -> clazz.getName(), clazz -> newInstanceD(clazz)));
     }
 
     private static Collection <Class<?>> scanDirectory() throws IOException {
-
-
         String dirline = null;
         try (FileInputStream fin = new FileInputStream("C:\\Users\\Sam\\IdeaProjects\\jsonup\\dirname\\directory.txt")) {
             BufferedReader br = new BufferedReader(new InputStreamReader(fin));
@@ -77,10 +72,18 @@ public class JsonStorage {
         }
     }
 
-    private static JsonSerializer<?> newInstance (Class <?> clazz) {
+    private static JsonSerializer<?> newInstanceS (Class <?> clazz) {
         try {
             return (JsonSerializer) clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static JsonDeserializer<?> newInstanceD (Class<?> clazz) {
+        try {
+            return (JsonDeserializer) clazz.newInstance();
+        } catch (IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }
     }
